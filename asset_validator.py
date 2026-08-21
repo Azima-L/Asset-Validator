@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QWidget, QLabel, QListWidget, QPushButton, QVBoxLayout
 import sys
 
 class MyWindow(QWidget):
@@ -12,6 +12,9 @@ class MyWindow(QWidget):
 
         self.label = QLabel("Press Run to validate assets")
         layout.addWidget(self.label)
+
+        self.list_widget = QListWidget()
+        layout.addWidget(self.list_widget)
 
         button = QPushButton("Run Validator")
         button.clicked.connect(self.run_validator)
@@ -47,7 +50,11 @@ class MyWindow(QWidget):
                 invalid_counter += 1
 
         self.label.setText(f"{valid_counter} valid, {invalid_counter} invalid:\n"
-                           f"{", ".join(failed_files)}")
+                           "\nInvalid files:")
+
+        self.list_widget.clear()
+        for failed_file in failed_files:
+            self.list_widget.addItem(failed_file)
     
 
 app = QApplication(sys.argv)
