@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QApplication, QWidget, QLabel, QListWidget, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QWidget, QFileDialog, QLabel, QListWidget, QPushButton, QVBoxLayout
 import sys
+import os
 
 class MyWindow(QWidget):
     def __init__(self):
@@ -10,13 +11,13 @@ class MyWindow(QWidget):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.label = QLabel("Press Run to validate assets")
+        self.label = QLabel("Press Browse Folders to validate assets")
         layout.addWidget(self.label)
 
         self.list_widget = QListWidget()
         layout.addWidget(self.list_widget)
 
-        button = QPushButton("Run Validator")
+        button = QPushButton("Browse Folders")
         button.clicked.connect(self.run_validator)
         layout.addWidget(button)
 
@@ -30,26 +31,26 @@ class MyWindow(QWidget):
         return True
 
     def run_validator(self):
-        assets = [
-            "SM_Rock.fbx",
-            "rock.fbx",
-            "T_.png",
-            "SK_Hero.png",
-            "SM_Tree.obj"
-            ]
+        folder = QFileDialog.getExistingDirectory(self, "Select Asset Folder")
 
+        if not folder:
+            self.list_widget.clear()
+            self.label.setText("No folder selected.")
+            return
+
+        files = os.listdir(folder)
         valid_counter = 0
         invalid_counter = 0
         failed_files = []
 
-        for asset in assets:
-            if self.is_valid_asset_name(asset):
+        for file in files:
+            if self.is_valid_asset_name(file):
                 valid_counter += 1
             else:
-                failed_files.append(asset)
+                failed_files.append(file)
                 invalid_counter += 1
 
-        self.label.setText(f"{valid_counter} valid, {invalid_counter} invalid:\n"
+        self.label.setText(f"{valid_counter} valid, {invalid_counter} invalid.\n"
                            "\nInvalid files:")
 
         self.list_widget.clear()
