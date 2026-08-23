@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QApplication, QWidget, QFileDialog, QLabel, QListWidget, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QWidget, QFileDialog, QLabel, QListWidget, QListWidgetItem, QPushButton, QVBoxLayout
+from PySide6.QtGui import QColor
 import sys
 import os
 
@@ -41,21 +42,24 @@ class MyWindow(QWidget):
         files = os.listdir(folder)
         valid_counter = 0
         invalid_counter = 0
-        failed_files = []
+        assets = []
 
         for file in files:
+            item = QListWidgetItem(file)
+            assets.append(item)
             if self.is_valid_asset_name(file):
+                item.setForeground(QColor("green"))
                 valid_counter += 1
             else:
-                failed_files.append(file)
+                item.setForeground(QColor("red"))
                 invalid_counter += 1
 
         self.label.setText(f"{valid_counter} valid, {invalid_counter} invalid.\n"
-                           "\nInvalid files:")
+                           "\nYour Files:")
 
         self.list_widget.clear()
-        for failed_file in failed_files:
-            self.list_widget.addItem(failed_file)
+        for asset in assets:
+            self.list_widget.addItem(asset)
     
 
 app = QApplication(sys.argv)
