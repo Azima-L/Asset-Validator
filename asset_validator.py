@@ -33,6 +33,10 @@ class MyWindow(QWidget):
         button.clicked.connect(self.run_validator)
         layout.addWidget(button)
 
+        button2 = QPushButton("Export Log")
+        button2.clicked.connect(self.export_log)
+        layout.addWidget(button2)
+
     def is_valid_asset_name(self, file_name):
         prefix_text = self.prefix_input.text()
         extension_text = self.extension_input.text()
@@ -57,27 +61,51 @@ class MyWindow(QWidget):
             self.label.setText("No folder selected.\n")
             return
 
-        files = os.listdir(folder)
-        valid_counter = 0
-        invalid_counter = 0
+        self.files = os.listdir(folder)
+        self.valid_counter = 0
+        self.invalid_counter = 0
         assets = []
 
-        for file in files:
+        for file in self.files:
             item = QListWidgetItem(file)
             assets.append(item)
             if self.is_valid_asset_name(file):
                 item.setForeground(QColor("green"))
-                valid_counter += 1
+                self.valid_counter += 1
             else:
                 item.setForeground(QColor("red"))
-                invalid_counter += 1
+                self.invalid_counter += 1
 
-        self.label.setText(f"{valid_counter} valid, {invalid_counter} invalid.\n")
+        self.label.setText(f"{self.valid_counter} valid, {self.invalid_counter} invalid.\n")
 
         self.list_widget.clear()
         for asset in assets:
             self.list_widget.addItem(asset)
-    
+
+    def export_log(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Log File",
+            "validation_log.txt",
+            "Text Files (*.txt)"
+        )
+
+        if path:
+            try:
+                with open(path, "w") as f:
+                    f.write("Asset Validation Report\n")
+                    f.write("=======================\n")
+                    for file in self.files:
+                        if self.is_valid_asset_name(file):
+                            f.write(f"{file} - VALID\n")
+                        else:
+                            f.write(f"{file} - INVALID\n")
+                    f.write(f"\nSummary: {self.valid_counter} valid, {self.invalid_counter} invalid.")
+                print("System Update: Asset Validation Report has been created.")
+            except AttributeError:
+                self.label.setText("Error: Run validation first\n")
+                print("System Update: Error: Run validation first")
+
 
 app = QApplication(sys.argv)
 window = MyWindow()
