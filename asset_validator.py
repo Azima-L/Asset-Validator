@@ -7,12 +7,12 @@ class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Asset Validator")
-        self.setFixedSize(400, 400)
+        self.setFixedSize(375, 400)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.label = QLabel("Simply type in your custom prefixes and extensions below \nthen click Browse Folders\n")
+        self.label = QLabel("Simply type in your custom prefixes and extensions \nbelow then click Browse Folders\n")
         layout.addWidget(self.label)
 
         self.prefix_input = QLineEdit()
@@ -37,6 +37,39 @@ class MyWindow(QWidget):
         button2.clicked.connect(self.export_log)
         layout.addWidget(button2)
 
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #1e1e1e;
+                color: white;
+                font-family: Arial;
+                font-size: 13px;
+            }
+            QLineEdit {
+                background-color: #2d2d2d;
+                color: white;
+                border: 1px solid #3d3d3d;
+                border-radius: 4px;
+                padding: 2px;
+            }
+            QListWidget {
+                background-color: black;
+                border: none;
+            }
+            QPushButton {
+                background-color: #0078d4;
+                color: white;
+                border-radius: 4px;
+                padding: 6px;
+            }
+            QPushButton:hover {
+                background-color: #005fa3;
+            }
+        """)
+
+        self.files = []
+        self.valid_counter = 0
+        self.invalid_counter = 0
+
     def is_valid_asset_name(self, file_name):
         prefix_text = self.prefix_input.text()
         extension_text = self.extension_input.text()
@@ -59,6 +92,7 @@ class MyWindow(QWidget):
         if not folder:
             self.list_widget.clear()
             self.label.setText("No folder selected.\n")
+            print("System Update: Error: No folder selected")
             return
 
         self.files = os.listdir(folder)
@@ -70,19 +104,25 @@ class MyWindow(QWidget):
             item = QListWidgetItem(file)
             assets.append(item)
             if self.is_valid_asset_name(file):
-                item.setForeground(QColor("green"))
+                item.setForeground(QColor("#4ec94e"))
                 self.valid_counter += 1
             else:
                 item.setForeground(QColor("red"))
                 self.invalid_counter += 1
 
         self.label.setText(f"{self.valid_counter} valid, {self.invalid_counter} invalid.\n")
+        print(f'System Update: Selected "{folder}" directory')
 
         self.list_widget.clear()
         for asset in assets:
             self.list_widget.addItem(asset)
 
     def export_log(self):
+        if not self.files:
+            self.label.setText("Error: Run validation first.\n")
+            print("System Update: Error: Run validation first")
+            return
+
         path, _ = QFileDialog.getSaveFileName(
             self,
             "Save Log File",
@@ -101,10 +141,10 @@ class MyWindow(QWidget):
                         else:
                             f.write(f"{file} - INVALID\n")
                     f.write(f"\nSummary: {self.valid_counter} valid, {self.invalid_counter} invalid.")
-                print("System Update: Asset Validation Report has been created.")
-            except AttributeError:
-                self.label.setText("Error: Run validation first\n")
-                print("System Update: Error: Run validation first")
+                print("System Update: Asset Validation Report has been created")
+            except Exception as e:
+                self.label.setText(f"Error: {e}\n")
+                print(f"System Update: Error: {e}")
 
 
 app = QApplication(sys.argv)

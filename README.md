@@ -8,16 +8,16 @@ This project serves as my practical exploration of GUI programming in Python and
 
 ## Features & Architecture (v0.6)
 
-* **PySide6 (Qt) GUI Framework**: Built a standalone GUI utilizing `QVBoxLayout` for structured element alignment. A clean, smooth, and easy interface allows the tool to dock inside DCC software like Maya, Blender, Houdini, or Unreal Engine.
+* **PySide6 (Qt) GUI Framework**: Built a standalone GUI utilizing `QVBoxLayout` for structured element alignment. A clean, smooth, and easy interface allows the tool to dock inside a software like DCC and game engines (Maya, Blender, Houdini, or Unreal Engine).
 * **Custom Validation Rules:** Allows users —— like TDs and artists —— to define custom naming conventions (prefixes and extensions) to match specific project needs.
 * **Real-Time Visual Feedback:** Instantly colour-codes files (Green for valid, Red for invalid) within a GUI list view, enabling immediate identification of naming errors.
 * **Production Log Exporting:** Generates structured `.txt` validation reports detailing compliant and non-compliant assets, crucial for pipeline tracking, automated ingestion prep, and team/department feedback.
 * **Error Prevention:** Built-in safeguards with basic exception and attribute handling to prevent the app from crashing if users attempt to export a report before choosing a folder.
-Built-in safeguards prevent the app from crashing if you try to export a report before choosing a folder.
 
 ---
 
 ## Prerequisites
+
 * Python 3.10+ installed on your machine.
 * pip install PySide6
 
