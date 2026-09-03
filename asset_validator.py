@@ -92,7 +92,7 @@ class MyWindow(QWidget):
         if not folder:
             self.list_widget.clear()
             self.label.setText("No folder selected.\n")
-            print("System Update: Error: No folder selected")
+            print('[INFO] No folder selected.')
             return
 
         self.files = os.listdir(folder)
@@ -111,7 +111,7 @@ class MyWindow(QWidget):
                 self.invalid_counter += 1
 
         self.label.setText(f"{self.valid_counter} valid, {self.invalid_counter} invalid.\n")
-        print(f'System Update: Selected "{folder}" directory')
+        print(f'[INFO] Selected "{folder}" directory.')
 
         self.list_widget.clear()
         for asset in assets:
@@ -120,7 +120,7 @@ class MyWindow(QWidget):
     def export_log(self):
         if not self.files:
             self.label.setText("Error: Run validation first.\n")
-            print("System Update: Error: Run validation first")
+            print('[WARN] Run validation first.')
             return
 
         path, _ = QFileDialog.getSaveFileName(
@@ -141,10 +141,12 @@ class MyWindow(QWidget):
                         else:
                             f.write(f"{file} - INVALID\n")
                     f.write(f"\nSummary: {self.valid_counter} valid, {self.invalid_counter} invalid.")
-                print("System Update: Asset Validation Report has been created")
+                print('[INFO] Asset Validation Report has been created.')
             except Exception as e:
                 self.label.setText(f"Error: {e}\n")
-                print(f"System Update: Error: {e}")
+                print(f"[ERROR] {e}")
+        else:
+            print(f'[INFO] Batch Rename Report has been cancelled.')
 
 
 app = QApplication(sys.argv)
